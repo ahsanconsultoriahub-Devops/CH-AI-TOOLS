@@ -9,50 +9,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/homepage.css">
     <link rel="stylesheet" href="css/responsive.css">
-
-    <style>
-        /* --- PREMIUM LOADER & CANVAS STYLES --- */
-        
-        /* Subtle Noise Overlay for Texture */
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-        }
-        
-        /* Cinematic Loading Screen */
-        .loader {
-            position: fixed; inset: 0; background: #050505; z-index: 10001;
-            display: flex; align-items: center; justify-content: center; flex-direction: column;
-        }
-        .loader-title { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; color: #fff; letter-spacing: 0.1em; text-transform: uppercase; }
-        .loader-title span { color: #FF6B35; }
-        .loader-subtitle { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; color: #a4abc8; margin-top: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
-        .loader-bar { width: 220px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 30px; overflow: hidden; border-radius: 2px; }
-        .loader-progress { height: 100%; background: #FF6B35; width: 0; transition: width 0.2s ease; box-shadow: 0 0 10px rgba(255,107,53,0.5); }
-
-        /* Hero Canvas Alignment */
-        .hero { position: relative; overflow: hidden; }
-        #hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-        .hero-container { position: relative; z-index: 1; } /* Ensure text stays above particles */
-    </style>
 </head>
 <body>
-
-    <div class="noise-overlay"></div>
-
-    <div class="loader" id="loader">
-        <div class="loader-title">CONSULTORIA<span>.</span></div>
-        <div class="loader-subtitle">Enterprise SEO Platform</div>
-        <div class="loader-bar">
-            <div class="loader-progress" id="loader-progress"></div>
-        </div>
-    </div>
 
     <nav id="navbar" class="navbar">
         <div class="nav-container">
@@ -70,10 +32,7 @@
         </div>
     </nav>
 
-    <section class="hero dark-neon-theme">
-        
-        <canvas id="hero-canvas"></canvas>
-        
+<section class="hero dark-neon-theme">
         <div class="ambient-glow"></div>
 
         <div class="hero-container">
@@ -138,6 +97,8 @@
         </div>
     </section>
 
+<!-- TOOLS SECTION -->
+
 <section class="tools-section" id="tools">
         <div class="tools-container">
             
@@ -195,6 +156,8 @@
             </div>
         </div>
     </section>
+
+<!-- Footer -->
 
 <footer class="site-footer">
         <div class="footer-glow"></div>
@@ -273,121 +236,13 @@
         </div>
     </footer>
 
+<!-- Cursor -->
 <div class="cursor-dot"></div>
 <div class="cursor-trail-container" id="trailContainer"></div>
-<script src="js/main.js"></script>
+<!-- Cursor End -->
+
+    <script src="js/main.js"></script>
     <script src="js/typing.js"></script>
     <script src="js/animations.js"></script>
-
-    <script>
-        // --- 1. LOADER ANIMATION (GSAP) ---
-        window.addEventListener('load', () => {
-            const progress = document.getElementById('loader-progress');
-            let width = 0;
-            
-            const interval = setInterval(() => {
-                width += Math.random() * 25; 
-                if (width >= 100) {
-                    width = 100;
-                    progress.style.width = width + '%';
-                    clearInterval(interval);
-                    
-                    setTimeout(() => {
-                        gsap.to('#loader', {
-                            opacity: 0,
-                            duration: 0.8,
-                            ease: 'power2.inOut',
-                            onComplete: () => {
-                                document.getElementById('loader').style.display = 'none';
-                            }
-                        });
-                    }, 400); 
-                } else {
-                    progress.style.width = width + '%';
-                }
-            }, 80);
-        });
-
-        // --- 2. PARTICLE NETWORK BACKGROUND ---
-        const canvas = document.getElementById('hero-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        let animationId;
-
-        function resizeCanvas() {
-            const hero = document.querySelector('.hero');
-            if(hero) {
-                canvas.width = hero.offsetWidth;
-                canvas.height = hero.offsetHeight;
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-             resizeCanvas();
-             initParticles();
-             animateParticles();
-        });
-        window.addEventListener('resize', resizeCanvas);
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.size = Math.random() * 1.5 + 1;
-            }
-
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-
-                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
-            }
-
-            draw() {
-                ctx.fillStyle = 'rgba(255, 107, 53, 0.6)'; // Consultoria Neon Orange
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particles = [];
-            const particleCount = Math.min(80, Math.floor(canvas.width * canvas.height / 15000));
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach((particle, i) => {
-                particle.update();
-                particle.draw();
-
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[j].x - particle.x;
-                    const dy = particles[j].y - particle.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 150) {
-                        const opacity = 0.2 * (1 - distance / 150);
-                        ctx.strokeStyle = `rgba(255, 107, 53, ${opacity})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(particle.x, particle.y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            });
-
-            animationId = requestAnimationFrame(animateParticles);
-        }
-    </script>
 </body>
 </html>
